@@ -45,6 +45,9 @@ public class DatagramSender implements Runnable{
 						senderSocket.send(sendPacket);
 					}
 				}
+				Message message_send = new Message();
+				message_send.setMessage(message);
+				MessageQueue.put(message_send);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
