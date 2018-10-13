@@ -28,10 +28,7 @@ public class DatagramReceiver implements Runnable{
 				Message message = new Message();
 				String data = new String(datagramPacket.getData());
 				//Getting order of the message
-				String[] dataDividedBy = data.split("-");
-				int orderNumber = new Integer(dataDividedBy[dataDividedBy.length-1]);
-				message.setNumber(orderNumber);
-				message.setMessage(String.join( "-",Arrays.copyOfRange(dataDividedBy,0,dataDividedBy.length-1)));
+				message.setMessage(data);
 				messageQueue.put(message);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

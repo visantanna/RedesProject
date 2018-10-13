@@ -39,7 +39,7 @@ public class App
 	    	
 	    	while(true){
 	    		Message message = MessageQueue.take();
-	    		System.out.println(message);
+	    		System.out.println(message.getMessage());
 	    	}
 	    	
 		} catch (Exception e) {
