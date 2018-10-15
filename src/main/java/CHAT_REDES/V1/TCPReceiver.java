@@ -10,7 +10,8 @@ public class TCPReceiver implements Runnable{
 	ChatWindow chat;
 	
 	public TCPReceiver(Socket socket , ChatWindow chat ){
-		socket = this.socket;
+		this.socket=socket;
+		this.chat = chat;
 	}
 
 	public void run() {
@@ -22,9 +23,11 @@ public class TCPReceiver implements Runnable{
 						)
 					   );
 				String message = returnFromConnection.readLine();
+				System.out.println("Recebido com sucesso!");
 				chat.messageRecieved(message);
 			} catch (IOException e) {
 				e.printStackTrace();
+				break;
 			}
 		}
 	}

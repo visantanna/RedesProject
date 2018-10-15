@@ -25,14 +25,19 @@ public class TCPSender implements Runnable{
 		while(true){
 			try {
 				String message = MessageQueue.take();
+				System.out.println("Mensagem tirada da fila: " + message);
 				DataOutputStream sendOutput = new DataOutputStream(
 						connection.getOutputStream()
 						);
 				sendOutput.writeBytes(message);
+				System.out.println("Enviada com sucesso: "+ message);
 			} catch (IOException e) {
 				e.printStackTrace();
+				System.out.println("Conexão foi perdida");
+				break;
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				
+				break;
 			} 
 		}
 	}

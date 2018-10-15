@@ -1,5 +1,6 @@
 package CHAT_REDES.V1;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -10,13 +11,19 @@ import java.util.concurrent.BlockingQueue;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 public class ChatWindow  implements Runnable   {
 	JFrame tela;
 	JTextArea textWriteableArea;
-	JTextArea textReadableArea;
+	JTextPane textReadableArea;
 	JScrollPane WrittableScrollPanel;
 	JScrollPane ReadableScrollPanel;
 	JButton sendButton;
@@ -27,6 +34,10 @@ public class ChatWindow  implements Runnable   {
 	Thread threadReceiver;
 	Thread threadSender;
 	ArrayBlockingQueue<String> Queue;
+	StyledDocument doc;
+	SimpleAttributeSet specialKeyWord;
+	SimpleAttributeSet normalKeyWord;
+	JScrollBar verticalScrollReadeable;
 	
 	
 	public ChatWindow(Socket connection){
@@ -36,7 +47,7 @@ public class ChatWindow  implements Runnable   {
 		tela.getContentPane().setLayout(null);
 		tela.setSize(400, 300 );
 		textWriteableArea = new JTextArea(5, 40);
-		textReadableArea = new JTextArea(10 ,60);
+		textReadableArea = new JTextPane();
 		WrittableScrollPanel = new JScrollPane(textWriteableArea);
 		ReadableScrollPanel = new JScrollPane(textReadableArea);
 		ReadableScrollPanel.setBounds( 30 , 11 , 320 , 150);
@@ -48,11 +59,21 @@ public class ChatWindow  implements Runnable   {
 		textReadableArea.setEditable(false);
 		sendButton = new JButton();
 		sendButton.setText("Envio");
-		sendButton.setBounds(310, 210 , 60 , 20);
+		sendButton.setBounds(300, 210 , 70 , 20);
+		doc = textReadableArea.getStyledDocument();
+		verticalScrollReadeable = ReadableScrollPanel.getVerticalScrollBar();
+
+		specialKeyWord = new SimpleAttributeSet();
+		StyleConstants.setForeground(specialKeyWord, new Color(35, 76, 142));
+		StyleConstants.setBold(specialKeyWord, true);
+		
+		normalKeyWord = new SimpleAttributeSet();
+		StyleConstants.setAlignment(normalKeyWord,StyleConstants.ALIGN_LEFT );
 		
 		tela.getContentPane().add(WrittableScrollPanel);
 		tela.getContentPane().add(ReadableScrollPanel);
 		tela.getContentPane().add(sendButton);
+		tela.setVisible(true);
 		this.connection = connection;
 		try {
 			Queue = new ArrayBlockingQueue<String>(10);
@@ -108,14 +129,29 @@ public class ChatWindow  implements Runnable   {
 		
 	}
 	public void messageRecieved(String message){
-		this.textReadableArea.append(ipAddress + ": " + message + "\n");
+		try {
+			this.doc.insertString(doc.getLength() , ipAddress + ": "  ,specialKeyWord );
+			this.doc.insertString(doc.getLength() , message + "\n" , normalKeyWord );
+			verticalScrollReadeable.setValue(verticalScrollReadeable.getMaximum());
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 	}
 	public void sendMessage(String message){
 		try {
 			Queue.put(message);
+			System.out.println("Mensagem colocada na Fila " + message);
 			textWriteableArea.setText("");
+			try {
+				this.doc.insertString(doc.getLength(),"localhost: ", specialKeyWord);
+				
+				this.doc.insertString(doc.getLength(),message + "\n" , normalKeyWord);
+				verticalScrollReadeable.setValue(verticalScrollReadeable.getMaximum());
+			} catch (BadLocationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
