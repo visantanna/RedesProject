@@ -28,7 +28,7 @@ public class ConnectionManager implements Runnable {
 				, connection.getPort());
 		System.out.println("Recebendo conexão do ip "+ client.getIp() + " atualizando tempo restante até proxima verificação para : "+ client.getRemaningTimeToUpdate());
 		clientList.keepAlive(client);
-		messageManager.addMessageRepository(client.getIp());
+		messageManager.addMessageRepository(client.getConnectionParam());
 		try {
 			System.out.println("Lendo input da conexão...");
 			ObjectOutputStream sendOutput = new ObjectOutputStream(connection.getOutputStream());
@@ -56,31 +56,30 @@ public class ConnectionManager implements Runnable {
 		Sendable messageReceived = null;
 		try {
 			messageReceived = (Sendable) returnFromConnection.readObject();
+			clientList.keepAlive(client);
 		} catch (ClassNotFoundException e) {
 			System.out.println("Mensagem recebida não esta no formato correto");
 			e.printStackTrace();
 		}
-		System.out.println("Comando recebido foi: "+ messageReceived.getMessageType());
+		
 		switch(messageReceived.getMessageType()){
 		
 		case "GetIP":
-			clientList.keepAlive(client);
 			ArrayList<ConnectionParams> listConnected = (ArrayList<ConnectionParams>) clientList.getAllConnectedIps();
 			CollectionConnections listOfConnections = new CollectionConnections();
 			listOfConnections.setListofConnections(listConnected);
-			System.out.println(listConnected);
 			sendOutput.writeObject(listOfConnections);
 			break;
 		case "SendMessage":
 			Message formattedMessageSend = (Message) messageReceived;
-			formattedMessageSend.setIpSource(client.getIp());
-			System.out.println("---------------------------------mensagem recebida----------------------------------------");
-			messageManager.addMessageRepository(formattedMessageSend.getIpDestination() , formattedMessageSend);
+			formattedMessageSend.setSource(client.getConnectionParam());
+			messageManager.addMessageRepository(formattedMessageSend.getDestination() , formattedMessageSend);
 			break;
 		case "getMessages":
 			Message formattedMessageGet = (Message) messageReceived;
-			formattedMessageGet.setIpSource(client.getIp());
-			ArrayBlockingQueue<Message> listOfMessages = messageManager.get(formattedMessageGet.getIpSource());
+			formattedMessageGet.setSource(client.getConnectionParam());
+			messageManager.addMessageRepository(client.getConnectionParam());
+			ArrayBlockingQueue<Message> listOfMessages = messageManager.get(formattedMessageGet.getSource());
 			ArrayList<Message> listToBeSend = new ArrayList<Message>();
 			if(listOfMessages != null){	
 				listOfMessages.drainTo(listToBeSend);

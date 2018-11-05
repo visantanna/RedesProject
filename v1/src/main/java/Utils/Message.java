@@ -1,7 +1,5 @@
 package Utils;
 
-
-
 public class Message  extends Sendable{
 	/**
 	 * 
@@ -10,8 +8,8 @@ public class Message  extends Sendable{
 	
 	private String messageType;
 	private String content;
-	private String IpDestination;
-	private String IpSource;
+	private ConnectionParams destination;
+	private ConnectionParams source;
 	
 	public Message (String messageType){
 		this.messageType = messageType;
@@ -33,17 +31,17 @@ public class Message  extends Sendable{
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public String getIpDestination() {
-		return IpDestination;
+	public ConnectionParams getDestination() {
+		return destination;
 	}
-	public void setIpDestination(String ipDestination) {
-		IpDestination = ipDestination;
+	public void setDestination(ConnectionParams Destination) {
+		destination = Destination;
 	}
-	public String getIpSource() {
-		return IpSource;
+	public ConnectionParams getSource() {
+		return source;
 	}
-	public void setIpSource(String ipSource) {
-		IpSource = ipSource;
+	public void setSource(ConnectionParams Source) {
+		source = Source;
 	}
 	
 }

@@ -10,9 +10,10 @@ public class ClientListManager extends Thread{
 	public void run() {
 		long inicio = 0;
 		long fim = 0; 
+		long timeForNextUpdate = 400;
 		while(true){
 			long realTimePassed = fim - inicio;
-			long timeForNextUpdate =  clientList.updateConnectedList(realTimePassed);
+			clientList.updateConnectedList(realTimePassed);
 			inicio = System.currentTimeMillis();
 			try {
 				this.sleep(timeForNextUpdate);

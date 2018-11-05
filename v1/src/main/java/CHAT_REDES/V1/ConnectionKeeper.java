@@ -1,7 +1,9 @@
 package CHAT_REDES.V1;
 
-import java.io.BufferedInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -34,6 +36,28 @@ public class ConnectionKeeper implements Runnable{
 		this.messageQueue =  messageQueue;
 		this.messageRepository = messageRepository;
 		this.chatOpenner = chatOpenner;
+		checkConfig();
+	}
+
+	private void checkConfig() {
+		File configDir = new File("config.txt");
+		if(configDir.exists()){
+			try {
+				BufferedReader reader = new BufferedReader(new FileReader(configDir));
+				String newIP = reader.readLine();
+				String newPort = reader.readLine();
+				serverAddress = newIP.split("=")[1];
+				serverPort    = new Integer(newPort.split("=")[1]);
+				System.out.println("serverAddress: " +  serverAddress );
+				System.out.println("port: " + serverPort);
+			} catch (IOException e) {
+				System.out.println("O formato do arquivo é inválido");
+				e.printStackTrace();
+				serverPort = 50213;
+				serverAddress = "52.33.208.132";
+			} 
+		}
+		
 	}
 
 	public void run() {
@@ -80,8 +104,6 @@ public class ConnectionKeeper implements Runnable{
 				ArrayList<ConnectionParams> IpList = connections.getListofConnections();
 				listOfConnectedIps.removeIf(element -> !IpList.contains(element));
 				listOfConnectedIps.addAllAbsent(IpList);
-				listOfConnectedIps.forEach(connected -> System.out.println(connected.getIp()+ " porta:" + connected.getPort()));
-				System.out.println("Lista Atualizada com sucesso!");
 				break;
 			case "SendMessage":
 				sendOutput.writeObject(message);
@@ -89,8 +111,8 @@ public class ConnectionKeeper implements Runnable{
 			case "getMessages":
 				sendOutput.writeObject(message);
 				MessageList list = (MessageList) returnFromServer.readObject();
-				list.getMessageList().forEach(messageOfList -> messageRepository.addMessageRepository(messageOfList.getIpSource(), messageOfList));
-				list.getMessageList().forEach(messageOfList -> chatOpenner.createNewChat(messageOfList.getIpSource()));
+				list.getMessageList().forEach(messageOfList -> messageRepository.addMessageRepository(messageOfList.getSource(), messageOfList));
+				list.getMessageList().forEach(messageOfList -> chatOpenner.createNewChat(messageOfList.getSource()));
 				break;
 		}
 	}

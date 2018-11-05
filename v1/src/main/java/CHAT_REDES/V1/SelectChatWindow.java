@@ -33,8 +33,8 @@ public class SelectChatWindow extends JPanel implements Runnable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JList list;
-    private DefaultListModel<String> listModel;
+	private JList<ConnectionParams> list;
+    private DefaultListModel<ConnectionParams> listModel;
     private JButton connectButton;
     private JScrollPane scroll;
     private JFrame frame;
@@ -55,11 +55,11 @@ public class SelectChatWindow extends JPanel implements Runnable {
 		frame = new JFrame("Lista de Ips conectados");
 		frame.setLayout(null);
 		frame.setSize(340 , 200);
-		listModel = new DefaultListModel<String>();
+		listModel = new DefaultListModel<ConnectionParams>();
 		connectButton = new JButton();
 		connectButton.setText("Conectar");
-		listOfConnectedIps.forEach(connection -> listModel.addElement(connection.getIp()));
-		list = new JList<String>(listModel);
+		listOfConnectedIps.forEach(connection -> listModel.addElement(connection));
+		list = new JList<ConnectionParams>(listModel);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setSelectedIndex(0);
 		scroll = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED ,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
@@ -159,30 +159,30 @@ public class SelectChatWindow extends JPanel implements Runnable {
 		
 	}
 	protected void connect() {
-		String ip = (String) list.getSelectedValue();
+		ConnectionParams ip = list.getSelectedValue();
 		createNewChat(ip);
 		
 		
 	}
 	public void updateList(List<ConnectionParams> newListConnection){
-		ArrayList<String> oldList = new ArrayList<String>();
+		ArrayList<ConnectionParams> oldList = new ArrayList<ConnectionParams>();
 		if(listModel.toArray().length > 0){
 			Object[] listIPs = listModel.toArray(); 
 			for(int i = 0 ; i <listIPs.length ; i ++ ){
-				if(listIPs[i] instanceof String ){
-					oldList.add((String)listIPs[i]);
+				if(listIPs[i] instanceof ConnectionParams ){
+					oldList.add((ConnectionParams)listIPs[i]);
 				}
 			}
 			
 		}
-		ArrayList<String> newList = new ArrayList<String>();
+		ArrayList<ConnectionParams> newList = new ArrayList<ConnectionParams>();
 		for(ConnectionParams connection : newListConnection){
-			if(!oldList.contains(connection.getIp())){
-				listModel.addElement(connection.getIp());
+			if(!oldList.contains(connection)){
+				listModel.addElement(connection);
 			}
-			newList.add(connection.getIp());
+			newList.add(connection);
 		}
-		for(String connection : oldList){
+		for(ConnectionParams connection : oldList){
 			if(!newList.contains(connection)){
 				listModel.removeElement(connection);
 			}
@@ -192,11 +192,11 @@ public class SelectChatWindow extends JPanel implements Runnable {
 	public void run() {
 		init();
 	}
-	public void createNewChat(String ip){
-		messageRepository.addMessageRepository(ip);
-		ArrayBlockingQueue<Message> messageFromServer = messageRepository.get(ip);
-		chatList.removeIf(chat -> chat == null || chat.ipAddress == null);
-		ChatWindow newChatWindow = new ChatWindow(ip, messageToServer ,  messageFromServer);
+	public void createNewChat(ConnectionParams address){
+		messageRepository.addMessageRepository(address);
+		ArrayBlockingQueue<Message> messageFromServer = messageRepository.get(address);
+		chatList.removeIf(chat -> chat.status == "closed");
+		ChatWindow newChatWindow = new ChatWindow(address, messageToServer ,  messageFromServer);
 		if(!chatList.contains(newChatWindow)){
 			chatList.add(newChatWindow);
 			new Thread(newChatWindow).start();

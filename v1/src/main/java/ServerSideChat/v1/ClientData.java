@@ -1,5 +1,7 @@
 package ServerSideChat.v1;
 
+import Utils.ConnectionParams;
+
 public class ClientData {
 	private String ip;
 	private int port;
@@ -30,6 +32,7 @@ public class ClientData {
 	public void setRemaningTimeToUpdate(long remaningTimeToUpdate) {
 		this.remaningTimeToUpdate = remaningTimeToUpdate;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -44,6 +47,11 @@ public class ClientData {
 				return false;
 		} else if (!ip.equals(other.ip))
 			return false;
+		if (port != other.port)
+			return false;
 		return true;
+	}
+	public ConnectionParams getConnectionParam(){
+		return new ConnectionParams(ip , port);
 	}
 }

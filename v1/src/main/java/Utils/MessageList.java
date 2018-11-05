@@ -12,7 +12,7 @@ public class MessageList extends Sendable{
 	private ArrayList<Message> messageList = new ArrayList<Message>(); 
 	@Override
 	public String getMessageType() {
-		return "MessageList";
+		return MessageTypes.ListMessage.name();
 	}
 	public ArrayList<Message> getMessageList() {
 		return messageList;

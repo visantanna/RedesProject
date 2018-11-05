@@ -30,7 +30,7 @@ public class ClientList extends CopyOnWriteArrayList<ClientData>{
 		while(iterator.hasNext()){
 			ClientData clientData = (ClientData)iterator.next();
 			long newRemainingTime = clientData.getRemaningTimeToUpdate() -timePassed;
-			System.out.println("Atualizando o tempo até a proxima verificação do cliente: "+ clientData.getIp() + " tempo até a proxima atualização é: " + newRemainingTime);
+			//System.out.println("Atualizando o tempo até a proxima verificação do cliente: "+ clientData.getIp() + " tempo até a proxima atualização é: " + newRemainingTime);
 			if(newRemainingTime > 0){
 				if(newRemainingTime < minRemainingTime ){
 					minRemainingTime = newRemainingTime;
@@ -47,6 +47,7 @@ public class ClientList extends CopyOnWriteArrayList<ClientData>{
 	}
 	public void keepAlive(ClientData client) {
 		if(this.contains(client)){
+			client.setRemaningTimeToUpdate(10000);
 			this.set(this.indexOf(client), client);
 		}else{
 			this.add(client);

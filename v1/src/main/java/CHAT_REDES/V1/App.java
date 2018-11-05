@@ -12,15 +12,10 @@ import Utils.MessageRepository;
 import Utils.MessageTypes;
 
 
-/**
- * Hello world!
- *
- */
 public class App 
 {
     public static void main( String[] args )
     {
-    	int port = 8923;
     	MessageRepository messageRepository = new MessageRepository();
     	ArrayBlockingQueue<Message> messagesToServer = new ArrayBlockingQueue<>(10);
     	CopyOnWriteArrayList<ConnectionParams> listOfConnectedIps = new CopyOnWriteArrayList<ConnectionParams>();

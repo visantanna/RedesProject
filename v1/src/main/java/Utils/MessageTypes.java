@@ -3,7 +3,8 @@ package Utils;
 public enum MessageTypes{
 	SendMessage("SendMessage"),
 	GetIP("GetIP"),
-	getMessages("getMessages");
+	getMessages("getMessages"),
+	ListMessage("ListMessage");
 	
 	private final String name;
 	
