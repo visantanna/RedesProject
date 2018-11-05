@@ -60,6 +60,37 @@ public class ChatWindow  implements Runnable   {
 	}
 
 	private void init() {
+		tela = new JFrame();
+		tela.setTitle("Conversa com " + address.toString());
+		tela.getContentPane().setLayout(null);
+		tela.setSize(400, 300 );
+		textWriteableArea = new JTextArea(5, 40);
+		textReadableArea = new JTextArea();
+		WrittableScrollPanel = new JScrollPane(textWriteableArea);
+		ReadableScrollPanel = new JScrollPane(textReadableArea);
+		ReadableScrollPanel.setBounds( 30 , 11 , 320 , 150);
+		WrittableScrollPanel.setBounds( 30 , 180 , 260 , 70  );
+		WrittableScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		ReadableScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		WrittableScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		ReadableScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		textReadableArea.setEditable(false);
+		sendButton = new JButton();
+		sendButton.setText("Envio");
+		sendButton.setBounds(300, 210 , 70 , 20);
+		verticalScrollReadeable = ReadableScrollPanel.getVerticalScrollBar();
+
+		specialKeyWord = new SimpleAttributeSet();
+		StyleConstants.setForeground(specialKeyWord, new Color(35, 76, 142));
+		StyleConstants.setBold(specialKeyWord, true);
+		
+		normalKeyWord = new SimpleAttributeSet();
+		StyleConstants.setAlignment(normalKeyWord,StyleConstants.ALIGN_LEFT );
+		
+		tela.getContentPane().add(WrittableScrollPanel);
+		tela.getContentPane().add(ReadableScrollPanel);
+		tela.getContentPane().add(sendButton);
+		tela.setVisible(true);
 		sendButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
